@@ -1,8 +1,8 @@
 <style scoped>
 
 .cool-button {
-    color: magenta;
-    background: linear-gradient(95deg, green 30%, purple);
+    color: White;
+    background: linear-gradient(140deg, green 10%, purple);
     padding: 10px;
     margin: 5px;
     cursor: pointer;

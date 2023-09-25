@@ -1,10 +1,23 @@
 <script setup>
-  import newView from '../components/newView.vue'
+  import NewView from '../components/NewView.vue'
   import emitView from '../components/emitView.vue'
+  import aconditional from '../components/aconditional.vue'
+  import bconditional from '../components/bconditional.vue'
+  import Todo from '../components/Todo.vue'
+  import props from '../components/props.vue'
 
   import { RouterLink, RouterView } from 'vue-router'
   import { ref, reactive, computed, watch } from 'vue'
   import home from './HomeView.vue'
+
+  components: {
+    NewView,
+    emitView,
+    aconditional,
+    bconditional,
+    Todo,
+    props
+  }
 
   const selected = ref('')
   const picked = ref('One')
@@ -66,19 +79,44 @@
     alert(message)
   }
 
+  //6 Todo list setup
+  const newTodoText = ref('')
+  const todos = ref([
+  {
+    id: 1,
+    title: 'Do SIT120 task'
+  },
+  {
+    id: 2,
+    title: 'Wash car'
+  }
+])
+
+let nextTodoId = 3
+
+function addNewTodo() {
+  todos.value.push({
+    id: nextTodoId++,
+    title: newTodoText.value
+  })
+  newTodoText.value = ''
+}
+
   //9. Watcher
   watch(count, (newValue, oldValue) => {
   console.log(`Count has changed from ${oldValue} to ${newValue}`);
   });
 
   //10. Props
-  const props = defineProps(['huggy'])
-  console.log(props.huggy)
-  const moreProps = {
-    id: 1,
-    name: 'daisyLee'
-  }
 
+  const things = [
+  { name: 'Sword', type: 'weapon' },
+  { name: 'Spear', type: 'weapon' },
+  { name: 'Dagger', type: 'weapon' },
+  { name: 'Bowstaff', type: 'weapon' },
+  { name: 'Chair', type: 'furniture' },
+  { name: 'Bench', type: 'furniture' }
+  ];
 </script>
 
 <template>
@@ -111,26 +149,25 @@
 
     <span v-for="forNumber in 10" :key="forNumber">{{ forNumber }}</span> <!-- 6b. v-for with a range -->
     
-    <!-- 6a and 6b. Cant get to work due to key rule and v-if/for rule
-    <ul>
-      <template v-for="item in items"> 
-          <li>{{  item.msg }}</li>
-          <li class="Essential Concepts" role="for template"></li> 
-      </template>
-    </ul>
-    
-    <li v-for="item in cart" :key="item.id" v-if="item.name !== 'Yes'"> 
-      {{ item.name }}
-    </li>
-    -->
+    <!-- 6c and 6d -->
+    <aconditional/>
+    <bconditional/>
 
     <!-- 6e. v-for with a component -->
-    <NewView  
-      v-for="(item, index) in items"
-      :item="item"
-      :index="index"
-      :key="item.id"
-    />
+    <form v-on:submit.prevent="addNewTodo">
+      <label for="new-todo">Add a todo</label>
+      <input
+      v-model="newTodoText"
+      id="new-todo"
+      placeholder="E.g. Feed the cat"
+      />
+      <button>Add</button>
+    </form>
+    <ul>
+      <Todo
+        v-for="(todo, index) in todos" :key="todo.id" :title="todo.title" @remove="todos.splice(index, 1)"
+      ></Todo>
+    </ul>
 
     <br>
     <button @click="secondCount++">Add 1</button> <!-- 7a. Event Handling (inline)-->
@@ -170,7 +207,7 @@
     <br>
 
     <!-- 10. Continuation of props and others-->
-    <newView :id=moreProps.id :name="moreProps.name" />
+    <props :things="things"/>
 
     <div>
       <emitView @increase-by="(n) => countc += n" />
